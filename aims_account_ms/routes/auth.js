@@ -1,4 +1,3 @@
-
 // Importamos la librería de Express
 const express = require("express");
 const { matchedData } = require("express-validator");

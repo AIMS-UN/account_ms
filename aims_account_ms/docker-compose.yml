@@ -1,0 +1,43 @@
+version: "3.4"
+name: "aims_account_ms"
+
+services:
+  aims_account_ms:
+    build: .
+    image: aims_account_ms
+    container_name: aims_account_ms
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - MYSQL_DATABASE=aims_account_db
+      - MYSQL_USER=aims_account_user
+      - MYSQL_PASSWORD=aims_account_password
+      - MYSQL_HOST=aims_account_db
+      - MYSQL_PORT=3306
+      - JWT_SECRET=6jweWqIJNJ9aozbxQ6K4
+      - DEV=true
+    depends_on:
+      - aims_account_db
+    networks:
+      - aims_account_network
+    restart: always
+
+  aims_account_db:
+    image: mysql:latest
+    container_name: aims_account_db
+    ports:
+      - "3308:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootPassword
+      - MYSQL_DATABASE=aims_account_db
+      - MYSQL_USER=aims_account_user
+      - MYSQL_PASSWORD=aims_account_password
+      #volumes:
+      #- ./db/data:/var/lib/mysql
+    networks:
+      - aims_account_network
+
+networks:
+  aims_account_network:
+    driver: bridge

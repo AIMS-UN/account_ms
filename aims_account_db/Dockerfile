@@ -1,8 +1,0 @@
-FROM mysql:latest
-
-ENV MYSQL_ROOT_PASSWORD=rootPassword
-ENV MYSQL_DATABASE=aims_account_db
-ENV MYSQL_USER=aimsMaster
-ENV MYSQL_PASSWORD=aimsPassword
-
-EXPOSE 3306

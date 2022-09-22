@@ -1,4 +1,3 @@
-
 // Importamos la librería de entorno de Express
 const express = require("express");
 
@@ -15,7 +14,7 @@ const authMiddleware = require("../middleware/session");
 const { checkUsername } = require("../validators/users");
 
 // Aquí colocas el listado de todas las funciones con sus rutas
-router.get("/users/:username", authMiddleware, checkUsername, getUser);     // Para colocar variables, utiliza /:var1/:var2
+router.get("/users/:username", authMiddleware, checkUsername, getUser); // Para colocar variables, utiliza /:var1/:var2
 
 // Exportamos el redireccionador
 module.exports = router;
