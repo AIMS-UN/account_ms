@@ -18,7 +18,7 @@ async function getUser(req, res) {
   const data = await userModel.findOne({
     where: { username: username },
   });
-  res.send({ users: data });
+  res.send({ data });
 }
 
 /**
@@ -48,7 +48,7 @@ async function createUser(req, res) {
     user: dataUser,
   };
 
-  res.send({ user: data });
+  res.send({ data });
 }
 
 async function loginUser(req, res) {
@@ -76,7 +76,7 @@ async function loginUser(req, res) {
     user: user,
   };
 
-  res.send({ login: data });
+  res.send({ data });
 }
 
 /**
@@ -84,7 +84,41 @@ async function loginUser(req, res) {
  * @param {*} req
  * @param {*} res
  */
-function updateUser(req, res) {}
+async function updateUser(req, res) {
+  const body = matchedData(req);
+
+  const user = await userModel.findOne({
+    where: { id: body.id },
+  });
+
+  if (user === null) {
+    res.send({ error: "Usuario no encontrado" });
+    return;
+  }
+
+  const userNoRepeat = await userModel.findOne({
+    where: { username: body.username },
+  });
+
+  if (user !== null) {
+    res.send({ error: "Nombre de usuario ya existente" });
+    return;
+  }
+
+  const passwordHash = await encrypt(body.password);
+  body = { ...body, password: passwordHash };
+
+  const dataUser = await userModel.update(body,{
+    where: { id: body.id },
+  });
+
+  const data = {
+    token: await tokenSign(dataUser),
+    user: dataUser,
+  };
+
+  res.send({ data })
+}
 
 /**
  * Eliminar un usuario
