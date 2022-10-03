@@ -7,7 +7,7 @@ COPY package*.json ./
 
 RUN npm ci --production
 
-COPY . .
+COPY src ./src
 
 EXPOSE 3000
 
