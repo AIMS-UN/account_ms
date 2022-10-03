@@ -43,12 +43,7 @@ async function createUser(req, res) {
 
   const dataUser = await userModel.create(body);
 
-  const data = {
-    token: await tokenSign(dataUser),
-    user: dataUser,
-  };
-
-  res.send({ data });
+  res.send({ token: await tokenSign(dataUser), data: { user: dataUser }});
 }
 
 async function loginUser(req, res) {
@@ -71,12 +66,7 @@ async function loginUser(req, res) {
     return;
   }
 
-  const data = {
-    token: await tokenSign(user),
-    user: user,
-  };
-
-  res.send({ data });
+  res.send({ token: await tokenSign(user), data: { user } });
 }
 
 /**
@@ -112,12 +102,7 @@ async function updateUser(req, res) {
     where: { id: body.id },
   });
 
-  const data = {
-    token: await tokenSign(dataUser),
-    user: dataUser,
-  };
-
-  res.send({ data })
+  res.send({ token: await tokenSign(dataUser), data: { user: dataUser } });
 }
 
 /**
