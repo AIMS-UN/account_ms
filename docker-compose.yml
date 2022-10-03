@@ -35,7 +35,7 @@ services:
       - JWT_SECRET=6jweWqIJNJ9aozbxQ6K4
       - DEV=false
     ports:
-      - "3000:3000"
+      - "3001:3000"
 
 volumes:
   account:
