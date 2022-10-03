@@ -22,7 +22,7 @@ async function authMiddleware(req, res, next) {
     }
 
     const user = await userModel.findOne({
-      where: { username: username },
+      where: { username: dataToken.username },
     });
 
     req.user = user;
