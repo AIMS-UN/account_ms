@@ -43,7 +43,7 @@ async function createUser(req, res) {
 
   const dataUser = await userModel.create(body);
 
-  res.send({ token: await tokenSign(dataUser), data: { user: dataUser }});
+  res.send({ token: await tokenSign(dataUser), data: dataUser });
 }
 
 async function loginUser(req, res) {
@@ -66,7 +66,7 @@ async function loginUser(req, res) {
     return;
   }
 
-  res.send({ token: await tokenSign(user), data: { user } });
+  res.send({ token: await tokenSign(user), data: user });
 }
 
 /**
@@ -102,7 +102,7 @@ async function updateUser(req, res) {
     where: { id: body.id },
   });
 
-  res.send({ token: await tokenSign(dataUser), data: { user: dataUser } });
+  res.send({ token: await tokenSign(dataUser), data: dataUser });
 }
 
 /**
