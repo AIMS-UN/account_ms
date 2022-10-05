@@ -2,7 +2,7 @@ version: "3.8"
 name: aims
 
 services:
-  account_db:
+  account-db:
     image: mysql:latest
     container_name: account_db
     command: --default-authentication-plugin=mysql_native_password
@@ -13,24 +13,24 @@ services:
       - MYSQL_USER=aims
       - MYSQL_PASSWORD=aims
     ports:
-      - "3308:3306"
+      - "3307:3306"
     volumes:
-      - account:/var/lib/mysql
+      - account_db_data:/var/lib/mysql
 
-  account_ms:
+  account-ms:
     build: .
     image: aims_account_ms
     container_name: account_ms
     depends_on:
-      - account_db
+      - account-db
     links:
-      - account_db
+      - account-db
     environment:
       - PORT=3000
       - MYSQL_DATABASE=accounts
       - MYSQL_USER=aims
       - MYSQL_PASSWORD=aims
-      - MYSQL_HOST=account_db
+      - MYSQL_HOST=account-db
       - MYSQL_PORT=3306
       - JWT_SECRET=6jweWqIJNJ9aozbxQ6K4
       - DEV=false
@@ -38,4 +38,4 @@ services:
       - "3001:3000"
 
 volumes:
-  account:
+  account_db_data:
