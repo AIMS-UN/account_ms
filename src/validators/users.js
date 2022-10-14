@@ -12,11 +12,6 @@ const checkCreateUser = [
   (req, res, next) => validateResults(req, res, next),
 ];
 
-const checkUsername = [
-  check("username").exists().notEmpty(),
-  (req, res, next) => validateResults(req, res, next),
-];
-
 const checkLogin = [
   check("username").exists().notEmpty(),
   check("password").exists().notEmpty().isLength({ min: 5 }),
@@ -24,4 +19,4 @@ const checkLogin = [
 ];
 
 // Exportamos el arreglo
-module.exports = { checkCreateUser, checkUsername, checkLogin };
+module.exports = { checkCreateUser, checkLogin };

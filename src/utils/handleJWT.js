@@ -8,8 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 async function tokenSign(user) {
   return jwt.sign(
     {
-      username: user.username,
-      role: user.role,
+      id: user.id
     },
     JWT_SECRET,
     {

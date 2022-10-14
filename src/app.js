@@ -24,7 +24,7 @@ app.use(morgan("dev"));
 
 // Ahora vamos a invocar a las rutas
 app.use("/accounts", require("./routes/users"));
-app.use("", require("./routes/auth"));
+app.use("/", require("./routes/auth"));
 
 // Aquí se hará la conexión a la base de datos
 sequelize

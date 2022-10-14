@@ -1,34 +1,22 @@
 // Importamos el verificador de tokens
 const { verifyToken } = require("../utils/handleJWT");
 
-// Importamos el modelo del usuario
-const userModel = require("../models/users");
-
 // Función de autenticación entre rutas
 async function authMiddleware(req, res, next) {
   try {
     // Se necesita que el Header de la petición tenga el token de autorización
-    if (!req.headers.authorization) {
-      res.send({ error: "NOT_TOKEN_FOUND" });
+    if (req.headers.authorization == null) {
+      res.status(401).send({ error: "NOT_TOKEN_FOUND" });
       return;
     }
 
-    const token = req.headers.authorization.split(" ").pop();
-    const dataToken = await verifyToken(token);
+    const token = req.headers.authorization.split(" ").pop();   // Se separa ya que es: Bearer {Token}
+    const { id } = await verifyToken(token);                    // Aquí se saca el ID del usuario del token.
 
-    if (!dataToken.username) {
-      res.send({ error: "NOT_USERNAME_FOUND" });
-      return;
-    }
-
-    const user = await userModel.findOne({
-      where: { username: dataToken.username },
-    });
-
-    req.user = user;
+    res.locals.userID = id;
     next();
   } catch (e) {
-    res.send({ error: "Error de autenticación" });
+    res.status(403).send({ error: "UNVALID_TOKEN" });
   }
 }
 

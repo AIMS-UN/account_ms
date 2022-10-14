@@ -8,23 +8,23 @@ const User = sequelize.define(
   {
     id: {
       // Aquí estarán los listados de atributos de la tabla
-      type: DataTypes.INTEGER, // Este es el tipo de dato
-      autoIncrement: true, // Si es autoincremental
-      primaryKey: true, // Si es la llave primaria
-      allowNull: false, // Si se permite valores nulos (por defecto es que sí)
+      type: DataTypes.UUID,             // Este es el tipo de dato (UUID)
+      defaultValue: DataTypes.UUIDV4,   // Valor por defecto para la inicialización
+      primaryKey: true                  // Que sea la llave primaria
     },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     role: {
       type: DataTypes.ENUM("student", "teacher"),
-      allowNull: false,
-    },
+      allowNull: false
+    }
   },
   {
     timestamps: true, // Si queremos que se añadan marcas de tiempo

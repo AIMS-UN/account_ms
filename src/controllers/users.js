@@ -9,48 +9,44 @@ const { encrypt, compare } = require("../utils/handlePassword");
 const { tokenSign } = require("../utils/handleJWT");
 
 /**
- * Obtener el usuario de las bases de datos
- * @param {*} req
- * @param {*} res
+ * Registar un usuario nuevo
+ * @param req
+ * @param res
+ *
+ * @return registeredUser
  */
-async function getUser(req, res) {
-  const { username } = matchedData(req);
-  const data = await userModel.findOne({
-    where: { username: username },
-  });
-  res.send({ data });
-}
-
-/**
- * Crear un usuario nuevo
- * @param {*} req
- * @param {*} res
- */
-async function createUser(req, res) {
-  let body = matchedData(req);
+async function registerUser(req, res) {
+  const body = matchedData(req);
 
   const user = await userModel.findOne({
     where: { username: body.username },
   });
 
-  if (user !== null) {
-    res.send({ error: "Username ya utilizado" });
+  if (user != null) {
+    res.status(409).send({ error: "USERNAME_ALREADY_TAKEN" });
     return;
   }
 
   const passwordHash = await encrypt(body.password);
-  body = { ...body, password: passwordHash };
+  body.password = passwordHash;
 
   const dataUser = await userModel.create(body);
 
-  const deliver = {
+  const registeredUser = {
     token: await tokenSign(dataUser),
-    data: dataUser
-  }
+    data: dataUser,
+  };
 
-  res.send(deliver);
+  res.status(201).send(registeredUser);
 }
 
+/**
+ * Ingresar a un usuario nuevo
+ * @param req
+ * @param res
+ *
+ * @return loggedUser
+ */
 async function loginUser(req, res) {
   const body = matchedData(req);
 
@@ -58,8 +54,8 @@ async function loginUser(req, res) {
     where: { username: body.username },
   });
 
-  if (user === null) {
-    res.send({ error: "Usuario no encontrado" });
+  if (user == null) {
+    res.status(404).send({ error: "USER_NOT_FOUND" });
     return;
   }
 
@@ -67,65 +63,83 @@ async function loginUser(req, res) {
   const check = await compare(body.password, hashPassword);
 
   if (!check) {
-    res.send({ error: "Contraseña incorrecta" });
+    res.status(401).send({ error: "INVALID_PASSWORD" });
     return;
   }
 
-  const deliver = {
+  const loggedUser = {
     token: await tokenSign(user),
-    data: user
+    data: user,
+  };
+
+  res.status(200).send(loggedUser);
+}
+
+/**
+ * Obtener el usuario de las bases de datos
+ * @param {*} res
+ *
+ * @return user
+ */
+async function getUser(_req, res) {
+  const user = await userModel.findByPk(res.locals.userID);
+
+  if (!user) {
+    res.status(404).send({ error: "USER_NOT_FOUND" });
+    return;
   }
 
-  res.send(deliver);
+  res.status(200).send({ data: user });
 }
 
 /**
  * Actualizar un usuario
  * @param {*} req
  * @param {*} res
+ *
+ * @return updatedUser
  */
 async function updateUser(req, res) {
   const body = matchedData(req);
+  const userID = res.locals.userID;
 
-  const user = await userModel.findOne({
-    where: { id: body.id },
-  });
+  const user = await userModel.findByPk(userID);
 
-  if (user === null) {
-    res.send({ error: "Usuario no encontrado" });
-    return;
-  }
-
-  const userNoRepeat = await userModel.findOne({
-    where: { username: body.username },
-  });
-
-  if (user !== null) {
-    res.send({ error: "Nombre de usuario ya existente" });
+  if (user == null) {
+    res.status(404).send({ error: "USER_NOT_FOUND" });
     return;
   }
 
   const passwordHash = await encrypt(body.password);
-  body = { ...body, password: passwordHash };
+  body.password = passwordHash;
 
-  const dataUser = await userModel.update(body,{
-    where: { id: body.id },
+  await userModel.update(body, {
+    where: { id: userID }
   });
 
-  const deliver = {
-    token: await tokenSign(dataUser),
-    data: dataUser
-  }
-
-  res.send(deliver);
+  await getUser(req, res)
 }
 
 /**
  * Eliminar un usuario
- * @param {*} req
  * @param {*} res
  */
-function deleteUser(req, res) {}
+async function deleteUser(_req, res) {  
+  const userID = res.locals.userID;
+
+  const user = await userModel.findByPk(userID);
+
+  if (user == null) {
+    res.status(404).send({ error: "USER_NOT_FOUND" });
+    return;
+  }
+
+  userModel.destroy({
+    where: { id: userID },
+  });
+
+  res.status(410).send({ data: user });
+}
 
 // Exportar los controladores
-module.exports = { getUser, createUser, updateUser, deleteUser, loginUser };
+module.exports = { getUser, registerUser, updateUser, deleteUser, loginUser };
