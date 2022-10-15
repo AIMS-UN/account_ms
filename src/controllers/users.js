@@ -76,13 +76,30 @@ async function loginUser(req, res) {
 }
 
 /**
- * Obtener el usuario de las bases de datos
+ * Obtener el usuario autenticado de las bases de datos
  * @param {*} res
  *
  * @return user
  */
 async function getUser(_req, res) {
   const user = await userModel.findByPk(res.locals.userID);
+
+  if (!user) {
+    res.status(404).send({ error: "USER_NOT_FOUND" });
+    return;
+  }
+
+  res.status(200).send({ data: user });
+}
+
+/**
+ * Obtener algún usuario de las bases de datos
+ * @param {*} res
+ *
+ * @return user
+ */
+ async function getUserByID(req, res) {
+  const user = await userModel.findByPk(req.params.userID);
 
   if (!user) {
     res.status(404).send({ error: "USER_NOT_FOUND" });
@@ -142,4 +159,4 @@ async function deleteUser(_req, res) {
 }
 
 // Exportar los controladores
-module.exports = { getUser, registerUser, updateUser, deleteUser, loginUser };
+module.exports = { getUser, registerUser, updateUser, deleteUser, loginUser, getUserByID };

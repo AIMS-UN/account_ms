@@ -5,6 +5,8 @@ const { verifyToken } = require("../utils/handleJWT");
 async function authMiddleware(req, res, next) {
   try {
     // Se necesita que el Header de la petición tenga el token de autorización
+
+    console.log(`Middleware token: ${req.headers.authorization}`)
     if (req.headers.authorization == null) {
       res.status(401).send({ error: "NOT_TOKEN_FOUND" });
       return;
