@@ -1,3 +1,4 @@
+DELETE FROM users;
 INSERT INTO users (
         id,
         username,
