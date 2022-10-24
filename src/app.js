@@ -24,11 +24,11 @@ app.use(morgan("dev"));
 
 // Ahora vamos a invocar a las rutas
 app.use("/accounts", require("./routes/users"));
-app.use("/", require("./routes/auth"));
+app.use("/auth", require("./routes/auth"));
 
 // Aquí se hará la conexión a la base de datos
 sequelize
-  .sync({ force: !!process.env.DEV })
+  .sync({ force: Boolean(process.env.DB_FORCE_SYNC) })
   .then(() => {
     // Aquí la aplicación iniciará la escucha en el puerto que le colocamos
     // Esta función sería como el main del servidor

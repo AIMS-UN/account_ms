@@ -12,9 +12,9 @@ const { registerUser, loginUser } = require("../controllers/users");
 const { checkCreateUser, checkLogin } = require("../validators/users");
 
 // Aquí está la ruta de logeo
-router.post("/auth/login", checkLogin, loginUser);
+router.post("/login", checkLogin, loginUser);
 
 // Aquí está la ruta de registro
-router.post("/auth/register", checkCreateUser, registerUser);
+router.post("/register", checkCreateUser, registerUser);
 
 module.exports = router;

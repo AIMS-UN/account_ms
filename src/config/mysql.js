@@ -16,7 +16,6 @@ const sequelize = new Sequelize({
   host,
   port,
   dialect: "mysql", // Y se añade la base de datos que usaremos (ya que hay varias disponibles)
-  schema: "public", // El esquema de la base de datos
   logging: false,   // Si queremos que se muestren los logs de la base de datos
   pool: {
     max: 5,         // El número máximo de conexiones
