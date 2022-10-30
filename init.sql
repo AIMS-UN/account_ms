@@ -9,32 +9,32 @@ INSERT INTO users (
     )
 VALUES (
         'fd6644f8-f987-4da4-93c3-8b25e3a37f62',
-        'aims_teacher',
-        '$2a$10$3vVOXikKrlH.Et8bZ20sr./gt7oUhCKGiB.Fumz8hQYs1z6k.8eOW',
+        'aimsteacher',
+        '$2a$10$2kBni7vfh7NpShLy/jlY/uCD08BpTlWivJNvQtuFI2sC/uwmAel42',
         'teacher',
         '2022-10-24 12:38:51',
         '2022-10-24 12:38:51'
     ),
     (
         'fd6644f8-f987-4da4-93c3-8b25e3a37f63',
-        'aims_student',
-        '$2a$10$3vVOXikKrlH.Et8bZ20sr./gt7oUhCKGiB.Fumz8hQYs1z6k.8eOW',
+        'aimsstudent',
+        '$2a$10$2kBni7vfh7NpShLy/jlY/uCD08BpTlWivJNvQtuFI2sC/uwmAel42',
         'student',
         '2022-10-24 12:38:51',
         '2022-10-24 12:38:51'
     ),
     (
         'fd6644f8-f987-4da4-93c3-8b25e3a37f64',
-        'test_student1',
-        '$2a$10$3vVOXikKrlH.Et8bZ20sr./gt7oUhCKGiB.Fumz8hQYs1z6k.8eOW',
+        'teststudentuno',
+        '$2a$10$2kBni7vfh7NpShLy/jlY/uCD08BpTlWivJNvQtuFI2sC/uwmAel42',
         'student',
         '2022-10-24 12:38:51',
         '2022-10-24 12:38:51'
     ),
     (
         'fd6644f8-f987-4da4-93c3-8b25e3a37f65',
-        'test_student2',
-        '$2a$10$3vVOXikKrlH.Et8bZ20sr./gt7oUhCKGiB.Fumz8hQYs1z6k.8eOW',
+        'teststudentdos',
+        '$2a$10$2kBni7vfh7NpShLy/jlY/uCD08BpTlWivJNvQtuFI2sC/uwmAel42',
         'student',
         '2022-10-24 12:38:51',
         '2022-10-24 12:38:51'
