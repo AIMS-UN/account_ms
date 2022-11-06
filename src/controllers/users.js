@@ -8,6 +8,19 @@ const { encrypt, compare } = require("../utils/handlePassword");
 // Traemos los tokens
 const { tokenSign } = require("../utils/handleJWT");
 
+// Esta es la librería del LDAP para editarlo
+const Ldap = require("ldap-async").default;
+
+// Esta es la librería del LDAP para autenticar
+const { authenticate } = require("ldap-authentication");
+
+// Objeto del Ldap
+const ldap = new Ldap({
+  url: process.env.LDAP_URL,
+  bindDN: process.env.LDAP_ROOT,
+  bindCredentials: process.env.LDAP_PASSWORD,
+});
+
 /**
  * Registar un usuario nuevo
  * @param req
@@ -18,12 +31,20 @@ const { tokenSign } = require("../utils/handleJWT");
 async function registerUser(req, res) {
   const body = matchedData(req);
 
-  const user = await userModel.findOne({
-    where: { username: body.username },
-  });
+  const ldapUser = `userid=${body.username},ou=aimsUser,dc=aims,dc=edu,dc=co`;
 
-  if (user != null) {
-    res.status(409).send({ error: "USERNAME_ALREADY_TAKEN" });
+  try {
+    await ldap.add(ldapUser, {
+      uid: [body.username],
+      userPassword: [body.password],
+      objectClass: ["account", "simpleSecurityObject"]
+    });
+  } catch (err) {
+    if (err.lde_message === 'Entry Already Exists') {
+      res.status(401).send({ error: "USERNAME_ALREADY_TAKEN" });
+      return;
+    }
+    res.status(500).send({ error: "LDAP_AUTH_ERROR" });
     return;
   }
 
@@ -49,6 +70,24 @@ async function registerUser(req, res) {
  */
 async function loginUser(req, res) {
   const body = matchedData(req);
+
+  const userDn = `userid=${body.username},ou=aimsUser,dc=aims,dc=edu,dc=co`;
+
+  try {
+    await authenticate({
+      ldapOpts: { url: process.env.LDAP_URL },
+      userDn,
+      userPassword: body.password,
+    });
+  } catch (err) {
+
+    if (err.lde_message === 'Invalid Credentials') {
+      res.status(401).send({ error: "INVALID_CREDENTIALS" });
+      return;
+    }
+    res.status(500).send({ error: "LDAP_AUTH_ERROR" });
+    return;
+  }
 
   const user = await userModel.findOne({
     where: { username: body.username },
@@ -98,7 +137,7 @@ async function getUser(_req, res) {
  *
  * @return user
  */
- async function getUserByID(req, res) {
+async function getUserByID(req, res) {
   const user = await userModel.findByPk(req.params.userID);
 
   if (!user) {
@@ -131,17 +170,17 @@ async function updateUser(req, res) {
   body.password = passwordHash;
 
   await userModel.update(body, {
-    where: { id: userID }
+    where: { id: userID },
   });
 
-  await getUser(req, res)
+  await getUser(req, res);
 }
 
 /**
  * Eliminar un usuario
  * @param {*} res
  */
-async function deleteUser(_req, res) {  
+async function deleteUser(_req, res) {
   const userID = res.locals.userID;
 
   const user = await userModel.findByPk(userID);
