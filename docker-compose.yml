@@ -23,10 +23,10 @@ services:
     container_name: account_ms
     depends_on:
       - account-db
-      - aims-ldap
+      - account-ldap
     links:
       - account-db
-      - aims-ldap
+      - account-ldap
     environment:
       - PORT=3000
       - MYSQL_DATABASE=accounts
@@ -35,15 +35,15 @@ services:
       - MYSQL_HOST=account-db
       - MYSQL_PORT=3306
       - JWT_SECRET=6jweWqIJNJ9aozbxQ6K4
-      - LDAP_URL=ldap://aims-ldap:389
+      - LDAP_URL=ldap://account-ldap:389
       - LDAP_ROOT=cn=admin,dc=AIMS,dc=edu,dc=co
       - LDAP_PASSWORD=aims
     ports:
       - "3001:3000"
 
-  aims-ldap:
+  account-ldap:
     image: osixia/openldap:1.2.2
-    container_name: aims-ldap
+    container_name: account-ldap
     restart: always
     environment:
       COMPOSE_HTTP_TIMEOUT: 200
@@ -54,8 +54,6 @@ services:
       LDAP_ADMIN_PASSWORD: "aims"
       LDAP_CONFIG_PASSWORD: "config"
       LDAP_READONLY_USER: "false"
-      #LDAP_READONLY_USER_USERNAME: "readonly"
-      #LDAP_READONLY_USER_PASSWORD: "readonly"
       LDAP_BACKEND: "hdb"
       LDAP_TLS: "true"
       LDAP_TLS_CRT_FILENAME: "ldap.crt"
@@ -66,36 +64,20 @@ services:
       LDAP_TLS_PROTOCOL_MIN: "3.1"
       LDAP_TLS_VERIFY_CLIENT: "demand"
       LDAP_REPLICATION: "false"
-      #LDAP_REPLICATION_CONFIG_SYNCPROV: "binddn="cn=admin,cn=config" bindmethod=simple credentials=$LDAP_CONFIG_PASSWORD searchbase="cn=config" type=refreshAndPersist retry="60 +" timeout=1 starttls=critical"
-      #LDAP_REPLICATION_DB_SYNCPROV: "binddn="cn=admin,$LDAP_BASE_DN" bindmethod=simple credentials=$LDAP_ADMIN_PASSWORD searchbase="$LDAP_BASE_DN" type=refreshAndPersist interval=00:00:00:10 retry="60 +" timeout=1 starttls=critical"
-      #LDAP_REPLICATION_HOSTS: "#PYTHON2BASH:['ldap://ldap.example.org','ldap://ldap2.example.org']"
       LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
       LDAP_SSL_HELPER_PREFIX: "ldap"
     tty: true
     stdin_open: true
     volumes:
-      - ldap_data:/var/lib/ldap
-      - ldap_config:/etc/ldap/slapd.d
+      - account_ldap_data:/var/lib/ldap
+      - account_ldap_config:/etc/ldap/slapd.d
       - /container/service/slapd/assets/certs/
     ports:
       - "389:389"
       - "636:636"
     hostname: "aims.edu.co"
 
-  phpldapadmin:
-    image: osixia/phpldapadmin:latest
-    container_name: ldap_client
-    environment:
-      PHPLDAPADMIN_LDAP_HOSTS: "aims-ldap"
-      PHPLDAPADMIN_HTTPS: "false"
-    ports:
-      - "8085:80"
-    links:
-      - aims-ldap
-    depends_on:
-      - aims-ldap
-
 volumes:
   account_db_data:
-  ldap_data:
-  ldap_config:
+  account_ldap_data:
+  account_ldap_config:
