@@ -41,43 +41,5 @@ services:
     ports:
       - "3001:3000"
 
-  account-ldap:
-    image: osixia/openldap:1.2.2
-    container_name: account-ldap
-    restart: always
-    environment:
-      COMPOSE_HTTP_TIMEOUT: 200
-      LDAP_LOG_LEVEL: "256"
-      LDAP_ORGANISATION: "aims"
-      LDAP_DOMAIN: "aims.edu.co"
-      LDAP_BASE_DN: ""
-      LDAP_ADMIN_PASSWORD: "aims"
-      LDAP_CONFIG_PASSWORD: "config"
-      LDAP_READONLY_USER: "false"
-      LDAP_BACKEND: "hdb"
-      LDAP_TLS: "true"
-      LDAP_TLS_CRT_FILENAME: "ldap.crt"
-      LDAP_TLS_KEY_FILENAME: "ldap.key"
-      LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
-      LDAP_TLS_ENFORCE: "false"
-      LDAP_TLS_CIPHER_SUITE: "SECURE256:-VERS-SSL3.0"
-      LDAP_TLS_PROTOCOL_MIN: "3.1"
-      LDAP_TLS_VERIFY_CLIENT: "demand"
-      LDAP_REPLICATION: "false"
-      LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
-      LDAP_SSL_HELPER_PREFIX: "ldap"
-    tty: true
-    stdin_open: true
-    volumes:
-      - account_ldap_data:/var/lib/ldap
-      - account_ldap_config:/etc/ldap/slapd.d
-      - /container/service/slapd/assets/certs/
-    ports:
-      - "389:389"
-      - "636:636"
-    hostname: "aims.edu.co"
-
 volumes:
   account_db_data:
-  account_ldap_data:
-  account_ldap_config:
