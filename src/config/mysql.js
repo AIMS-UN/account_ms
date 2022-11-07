@@ -25,5 +25,17 @@ const sequelize = new Sequelize({
   },
 });
 
+// Aquí se hará la conexión a la base de datos
+async function loadDatabase() {
+  try {
+    await sequelize.sync();
+  }
+  catch (err) {
+    console.log("Error en la sincronización con la base de datos");
+    console.log(err);
+    process.exit();
+  }
+}
+
 // Exportamos el objeto de conexión y la función de conexión
-module.exports = sequelize;
+module.exports = { sequelize, loadDatabase };

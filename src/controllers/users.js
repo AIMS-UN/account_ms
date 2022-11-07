@@ -31,7 +31,7 @@ const ldap = new Ldap({
 async function registerUser(req, res) {
   const body = matchedData(req);
 
-  const ldapUser = `userid=${body.username},ou=aimsUser,dc=aims,dc=edu,dc=co`;
+  const ldapUser = `uid=${body.username},ou=aimsUser,dc=aims,dc=edu,dc=co`;
 
   try {
     await ldap.add(ldapUser, {
@@ -71,7 +71,7 @@ async function registerUser(req, res) {
 async function loginUser(req, res) {
   const body = matchedData(req);
 
-  const userDn = `userid=${body.username},ou=aimsUser,dc=aims,dc=edu,dc=co`;
+  const userDn = `uid=${body.username},ou=aimsUser,dc=aims,dc=edu,dc=co`;
 
   try {
     await authenticate({
@@ -80,7 +80,6 @@ async function loginUser(req, res) {
       userPassword: body.password,
     });
   } catch (err) {
-
     if (err.lde_message === 'Invalid Credentials') {
       res.status(401).send({ error: "INVALID_CREDENTIALS" });
       return;
@@ -163,6 +162,24 @@ async function updateUser(req, res) {
 
   if (user == null) {
     res.status(404).send({ error: "USER_NOT_FOUND" });
+    return;
+  }
+
+  const oldldapUser = `uid=${user.dataValues.username},ou=aimsUser,dc=aims,dc=edu,dc=co`;
+  const ldapUser = `uid=${body.username},ou=aimsUser,dc=aims,dc=edu,dc=co`;
+
+  try {
+    await ldap.modifyDN(oldldapUser, ldapUser)
+    await ldap.setAttributes(ldapUser, {
+      userPassword: body.password
+    });
+  } catch (err) {
+    if (err.lde_message === 'No Such Object') {
+      res.status(404).send({ error: "LDAP_USER_NOT_FOUND" });
+      return;
+    }
+    console.log(err);
+    res.status(500).send({ error: "LDAP_AUTH_ERROR" });
     return;
   }
 

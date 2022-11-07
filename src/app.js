@@ -11,7 +11,7 @@ const port = process.env.PORT; // Aquí el puerto se encuentra en el archivo .en
 const app = express();
 
 // Aquí obtenemos la conexión a la base de datos de MySQL
-const sequelize = require("./config/mysql");
+const { loadDatabase } = require("./config/mysql");
 
 // Aquí le informaremos a la aplicación de Express que utilizará
 app.use(CORS());
@@ -26,17 +26,11 @@ app.use(morgan("dev"));
 app.use("/accounts", require("./routes/users"));
 app.use("/auth", require("./routes/auth"));
 
-// Aquí se hará la conexión a la base de datos
-sequelize
-  .sync({ force: Boolean(process.env.DB_FORCE_SYNC) })
-  .then(() => {
-    // Aquí la aplicación iniciará la escucha en el puerto que le colocamos
-    // Esta función sería como el main del servidor
-    app.listen(port, () => {
-      console.log(`Servidor iniciado en https://localhost:${port}`);
-    });
-  })
-  .catch((e) => {
-    console.log("Error en la sincronización con la base de datos");
-    console.log(e);
-  });
+// Aquí se va a cargar la base de datos
+loadDatabase();
+
+// Aquí la aplicación iniciará la escucha en el puerto que le colocamos
+// Esta función sería como el main del servidor
+app.listen(port, () => {
+  console.log(`Servidor iniciado en https://localhost:${port}`);
+});

@@ -1,5 +1,5 @@
 // Aquí colocamos la información que usa Sequelize
-const sequelize = require("../config/mysql"); // La instancia del objeto de Sequelize
+const { sequelize } = require("../config/mysql"); // La instancia del objeto de Sequelize
 const { DataTypes } = require("sequelize"); // Los tipos de datos de Sequelize
 
 // Aquí definimos el modelo de Usuario
