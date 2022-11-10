@@ -38,11 +38,11 @@ class accountLDAP {
     }
   }
 
-  static async loginUser(userDn, userPassword) {
+  static async loginUser(uid, userPassword) {
     try {
       await authenticate({
         ldapOpts: { url: process.env.LDAP_URL },
-        userDn,
+        userDn: this.setLDAPName(uid),
         userPassword,
       });
     } catch (err) {

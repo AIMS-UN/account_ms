@@ -52,7 +52,7 @@ async function loginUser(req, res) {
   const body = matchedData(req);
 
   try {
-    await accountLDAP.loginUser();
+    await accountLDAP.loginUser(body.username, body.password);
   } catch (err) {
     let s = err === 'INVALID_CREDENTIALS' ? 401 : 500;
     res.status(s).send({ error: `err` });
